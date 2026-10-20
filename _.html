@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuromi Flashcards 💜 汉字</title>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--black:#1b1726;--purple:#8e6bd8;--lav:#c9b6ff;--pink:#ff8cc6;--pink2:#ffd1ea}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Mali',sans-serif;min-height:100vh;color:#fff;overflow-x:hidden;
+  background:radial-gradient(circle at 20% 10%,#4b2f7a 0%,#251a3d 45%,#140f20 100%)}
+.zh{font-family:'Noto Sans SC','Mali',sans-serif}
+#bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.fall{position:absolute;top:-50px;animation:fall linear infinite;opacity:.75}
+@keyframes fall{to{transform:translateY(115vh) rotate(360deg)}}
+.app{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:16px 14px 40px}
+
+header{display:flex;align-items:center;justify-content:center;gap:12px}
+.mascot{width:110px;flex-shrink:0;animation:bob 3s ease-in-out infinite;filter:drop-shadow(0 6px 14px rgba(255,140,198,.45));cursor:pointer}
+@keyframes bob{50%{transform:translateY(-9px) rotate(-4deg)}}
+.eye{animation:blink 4s infinite;transform-origin:center;transform-box:fill-box}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+h1{font-size:1.65rem;line-height:1.2;
+  background:linear-gradient(90deg,var(--pink),var(--lav),var(--pink));background-size:200%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 4s linear infinite}
+@keyframes shine{to{background-position:200%}}
+.bubble{background:#fff;color:var(--black);padding:7px 14px;border-radius:16px;font-size:.88rem;
+  position:relative;margin-top:6px;display:inline-block;animation:pop .45s}
+.bubble::before{content:'';position:absolute;left:-8px;top:10px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0 10px}
+select,.tbtn{font-family:inherit;font-size:.88rem;border:2px solid var(--pink);background:rgba(27,23,38,.85);
+  color:#fff;padding:7px 12px;border-radius:999px;cursor:pointer;transition:.2s}
+.tbtn:hover,select:hover{background:var(--pink);color:var(--black);transform:translateY(-2px)}
+.tbtn.on{background:var(--lav);color:var(--black);border-color:var(--lav)}
+.tbtn.warn{background:#ff5c8a;color:#fff;border-color:#ff5c8a}
+
+.stats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;font-size:.85rem}
+.stat{background:rgba(255,255,255,.08);padding:5px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.15)}
+.progress{height:12px;background:rgba(255,255,255,.12);border-radius:99px;margin:10px auto 0;max-width:560px;overflow:hidden}
+.bar{height:100%;width:0;border-radius:99px;transition:width .6s cubic-bezier(.4,1.5,.5,1);
+  background:linear-gradient(90deg,var(--pink),var(--lav),var(--pink));background-size:200%;animation:shine 2s linear infinite}
+
+.card-wrap{max-width:560px;margin:18px auto 0;perspective:1400px}
+.card{position:relative;width:100%;height:480px;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;cursor:pointer;
+  transition:transform .75s cubic-bezier(.68,-.35,.27,1.35)}
+.card.flipped{transform:rotateY(180deg)}
+.card.noanim{transition:none}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border-radius:28px;padding:22px 20px 18px;display:flex;flex-direction:column;gap:10px;overflow-y:auto}
+.face.back{transform:rotateY(180deg)}
+.face.light{color:var(--black);border:4px solid var(--black);
+  background:radial-gradient(circle,#ffd9ee 1.5px,transparent 1.6px) 0 0/22px 22px,linear-gradient(160deg,#fff 0%,#ffe6f4 100%);
+  box-shadow:0 0 0 6px var(--pink),0 22px 40px rgba(0,0,0,.45)}
+.face.dark{color:#fff;border:4px solid var(--pink);
+  background:radial-gradient(circle,rgba(201,182,255,.15) 1.5px,transparent 1.6px) 0 0/22px 22px,linear-gradient(160deg,#2c2244,#1b1726);
+  box-shadow:0 0 0 6px var(--black),0 22px 40px rgba(0,0,0,.45)}
+.face::after{content:'💀';position:absolute;top:14px;right:16px;font-size:1.3rem;animation:wiggle 2s ease-in-out infinite}
+.face.dark::after{content:'🎀'}
+@keyframes wiggle{50%{transform:rotate(15deg) scale(1.15)}}
+
+.tag{align-self:flex-start;font-size:.82rem;padding:4px 12px;border-radius:999px;background:var(--black);color:#fff;margin-right:34px}
+.face.dark .tag{background:var(--pink);color:var(--black)}
+.tag .num{opacity:.7;margin-left:6px}
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+.word{font-weight:700;line-height:1.25;animation:pop .5s}
+.s1{font-size:5.2rem}.s2{font-size:3.8rem}.s3{font-size:2.7rem}.s4{font-size:1.9rem}.s5{font-size:1.4rem}
+.hl{color:var(--purple);text-shadow:0 0 14px rgba(142,107,216,.35)}
+.face.dark .hl{color:var(--pink)}
+.py{font-size:1.35rem;color:var(--purple);font-weight:600;letter-spacing:.5px}
+.face.dark .py{color:var(--lav)}
+body.nopy .face.front .py{visibility:hidden}
+.thsmall{font-size:1rem;opacity:.75}
+.q{margin-top:10px;font-size:.95rem;background:var(--pink2);color:var(--black);padding:6px 14px;border-radius:14px}
+.q .hl{font-weight:700}
+.say{font-family:inherit;border:none;background:var(--black);color:#fff;padding:7px 16px;border-radius:999px;
+  cursor:pointer;margin-top:6px;font-size:.85rem;transition:.2s}
+.say:hover{background:var(--purple);transform:scale(1.08)}
+.face.dark .say{background:var(--pink);color:var(--black)}
+.hint{text-align:center;font-size:.8rem;opacity:.6;animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.25}}
+
+.ans{text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;animation:pop .5s}
+.ans-l{font-size:.8rem;color:var(--lav)}
+.gloss{font-weight:700;color:#fff;line-height:1.3}
+.meaning{font-size:1.25rem;font-weight:700;color:var(--pink);line-height:1.3}
+.eq{text-align:center;font-size:1.05rem;background:rgba(201,182,255,.15);border-radius:14px;padding:6px 10px}
+.eq .arrow{color:var(--pink);margin:0 4px}
+.sec{background:rgba(255,255,255,.07);border:1px dashed rgba(255,140,198,.5);border-radius:16px;padding:10px 12px}
+.sec-t{font-size:.8rem;color:var(--pink);margin-bottom:4px}
+.ex{font-size:1.15rem;line-height:1.5}
+.exp{font-size:.8rem;color:var(--lav);margin-top:2px}
+.ext{font-size:.88rem;margin-top:4px;opacity:.9}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:inherit;border:2px solid var(--lav);background:transparent;color:#fff;border-radius:14px;
+  padding:5px 10px;cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;transition:.2s}
+.chip:hover{background:var(--lav);color:var(--black);transform:translateY(-2px) rotate(-2deg)}
+.chip b{font-size:1.15rem}.chip small{font-size:.72rem;opacity:.85}
+.chip.big b{font-size:1.5rem}
+.warnsec{border-color:rgba(255,207,107,.6)}
+.warnsec .sec-t{color:#ffcf6b}
+.ol{display:flex;flex-direction:column;gap:3px;font-size:.92rem}
+.ol span small{opacity:.7;font-family:'Mali',sans-serif}
+.status{text-align:center;margin-top:12px;font-size:.85rem;min-height:1.2em}
+
+.actions{display:flex;justify-content:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.btn{font-family:inherit;font-weight:700;font-size:1rem;border:none;border-radius:20px;padding:12px 20px;cursor:pointer;
+  transition:transform .15s,box-shadow .2s;box-shadow:0 5px 0 rgba(0,0,0,.35)}
+.btn:hover{transform:translateY(-3px) scale(1.04)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
+.btn.no{background:#3a3150;color:#fff;border:2px solid #8a7fa8}
+.btn.yes{background:linear-gradient(135deg,var(--pink),var(--lav));color:var(--black)}
+.btn.flip{background:#fff;color:var(--black)}
+.nav{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:14px}
+.nav button{width:44px;height:44px;border-radius:50%;border:2px solid var(--pink);background:transparent;color:#fff;
+  font-size:1.1rem;cursor:pointer;transition:.2s}
+.nav button:hover{background:var(--pink);color:var(--black);transform:scale(1.1)}
+.keys{text-align:center;font-size:.72rem;opacity:.5;margin-top:10px}
+
+.enter{animation:enter .5s cubic-bezier(.3,1.5,.5,1)}
+@keyframes enter{from{opacity:0;transform:translateY(40px) scale(.85) rotate(-3deg)}to{opacity:1;transform:none}}
+.fly-right{animation:flyR .45s ease-in forwards}
+@keyframes flyR{20%{transform:translateX(-15px) rotate(-3deg)}100%{transform:translateX(130%) rotate(20deg);opacity:0}}
+.fly-left{animation:flyL .5s ease-in forwards}
+@keyframes flyL{10%{transform:translateX(-10px)}20%{transform:translateX(10px)}30%{transform:translateX(-10px)}40%{transform:translateX(8px)}100%{transform:translateX(-130%) rotate(-20deg);opacity:0}}
+.slide-l{animation:slideL .3s ease-in forwards}
+.slide-r{animation:slideR .3s ease-in forwards}
+@keyframes slideL{to{transform:translateX(-60px);opacity:0}}
+@keyframes slideR{to{transform:translateX(60px);opacity:0}}
+.particle{position:fixed;pointer-events:none;z-index:50;font-size:1.5rem;animation:burst 1s ease-out forwards}
+@keyframes burst{0%{transform:translate(0,0) scale(.4);opacity:1}
+  100%{transform:translate(var(--dx),var(--dy)) scale(1.2) rotate(var(--r));opacity:0}}
+
+.modal{position:fixed;inset:0;background:rgba(10,6,20,.75);display:none;align-items:center;justify-content:center;z-index:60;padding:16px}
+.modal.show{display:flex}
+.modal-box{background:linear-gradient(160deg,#fff,#ffe6f4);color:var(--black);border:4px solid var(--black);
+  box-shadow:0 0 0 6px var(--pink);border-radius:28px;padding:26px;text-align:center;max-width:380px;width:100%;animation:pop .5s}
+.modal-box h2{font-size:1.5rem;margin:6px 0}
+.modal-box p{margin:6px 0}
+.empty{display:flex;align-items:center;justify-content:center;height:100%;text-align:center;font-size:1.1rem;flex-direction:column;gap:8px}
+.err{color:#c0003c;font-size:.85rem;word-break:break-all}
+
+@media (max-width:520px){
+  .mascot{width:80px} h1{font-size:1.25rem} .card{height:520px}
+  .s1{font-size:4.2rem}.s2{font-size:3rem}.s3{font-size:2.2rem}.s4{font-size:1.6rem}.s5{font-size:1.2rem}
+  .btn{padding:10px 14px;font-size:.92rem}
+}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+
+<div class="app">
+  <header>
+    <svg class="mascot" id="mascot" viewBox="0 0 200 200" aria-label="Kuromi">
+      <path d="M45 105 C 35 60, 22 30, 8 8 C 48 16, 72 38, 84 56 C 94 52, 106 52, 116 56 C 128 38, 152 16, 192 8 C 178 30, 165 60, 155 105 Z" fill="#1b1726"/>
+      <path d="M8 8 C 20 20, 28 32, 34 44" stroke="#ff8cc6" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M192 8 C 180 20, 172 32, 166 44" stroke="#ff8cc6" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="100" cy="118" rx="70" ry="60" fill="#1b1726"/>
+      <g transform="translate(100 82)">
+        <circle r="13" fill="#ff8cc6"/>
+        <rect x="-7" y="8" width="14" height="8" rx="3" fill="#ff8cc6"/>
+        <circle cx="-5" cy="-1" r="3.2" fill="#1b1726"/>
+        <circle cx="5" cy="-1" r="3.2" fill="#1b1726"/>
+        <path d="M-1.5 5 L0 3 L1.5 5 Z" fill="#1b1726"/>
+      </g>
+      <ellipse cx="100" cy="134" rx="54" ry="40" fill="#fff"/>
+      <g class="eye"><ellipse cx="80" cy="128" rx="6.5" ry="9.5" fill="#1b1726"/><circle cx="82" cy="124" r="2.5" fill="#fff"/></g>
+      <g class="eye"><ellipse cx="120" cy="128" rx="6.5" ry="9.5" fill="#1b1726"/><circle cx="122" cy="124" r="2.5" fill="#fff"/></g>
+      <ellipse cx="66" cy="144" rx="9" ry="5" fill="#ff8cc6" opacity=".6"/>
+      <ellipse cx="134" cy="144" rx="9" ry="5" fill="#ff8cc6" opacity=".6"/>
+      <ellipse cx="100" cy="139" rx="4" ry="3" fill="#ffcf6b"/>
+      <path d="M92 148 Q100 156 108 148" stroke="#1b1726" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <h1>Kuromi 汉字 Flashcards</h1>
+      <div class="bubble" id="bubble">มาฝึกจับคู่คำความหมายเหมือนกันเถอะ! 💜</div>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <select id="charSel"><option value="all">🖤 ทุกตัวอักษร</option></select>
+    <select id="filterSel">
+      <option value="all">📚 ทั้งหมด</option>
+      <option value="unknown">💔 เฉพาะที่จำไม่ได้</option>
+      <option value="new">⭐ ยังไม่ได้ทวน</option>
+    </select>
+    <button class="tbtn" id="modeBtn">🔁 คำศัพท์ → คำความหมายเดียวกัน</button>
+    <button class="tbtn" id="pyBtn">🔤 พินอิน: เปิด</button>
+    <button class="tbtn" id="shuffleBtn">🔀 สุ่ม</button>
+    <button class="tbtn" id="resetBtn">🗑️ ล้างผล</button>
+  </div>
+
+  <div class="stats">
+    <span class="stat">💜 จำได้ <b id="sKnown">0</b></span>
+    <span class="stat">💔 จำไม่ได้ <b id="sUnknown">0</b></span>
+    <span class="stat">⭐ ยังไม่ทวน <b id="sNew">0</b></span>
+  </div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
+
+  <div class="card-wrap" id="wrap">
+    <div class="card" id="card">
+      <div class="face front light" id="faceFront">
+        <div class="empty">⏳ กำลังโหลดการ์ด...<br><small>ถ้าข้อความนี้ค้างอยู่ แปลว่า JavaScript ไม่ทำงาน</small></div>
+      </div>
+      <div class="face back dark" id="faceBack"></div>
+    </div>
+  </div>
+  <div class="status" id="status"></div>
+
+  <div class="actions">
+    <button class="btn no" id="noBtn">💔 จำไม่ได้</button>
+    <button class="btn flip" id="flipBtn">🔄 พลิก</button>
+    <button class="btn yes" id="yesBtn">💜 จำได้</button>
+  </div>
+  <div class="nav">
+    <button id="prevBtn">◀</button>
+    <span id="counter">0 / 0</span>
+    <button id="nextBtn">▶</button>
+  </div>
+  <div class="keys">⌨️ Space = พลิก · ← → = เลื่อน · 1 = จำไม่ได้ · 2 = จำได้</div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div style="font-size:3rem">🎀💀🎀</div>
+    <h2>จบรอบแล้ว!</h2>
+    <p id="mText"></p>
+    <div class="actions">
+      <button class="btn no" id="mUnknown">💔 ทวนคำที่จำไม่ได้</button>
+      <button class="btn yes" id="mAgain">🔁 เล่นอีกรอบ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener('error', function(e){
+  var f = document.getElementById('faceFront');
+  if (f) f.innerHTML = '<div class="empty">😵 เกิดข้อผิดพลาด<div class="err">' +
+    (e.message || 'unknown error') + ' (บรรทัด ' + (e.lineno || '?') + ')</div></div>';
+});
+</script>
+
+<script>
+/* =====================================================================
+   DATA
+   g  = คำที่ความหมายเหมือนกัน (คำตอบในข้อสอบ), gp = พินอินของ g, th = ความหมายไทย
+   w  = [คำศัพท์, พินอิน, ประโยคตัวอย่าง, พินอินประโยค, คำแปลประโยค]
+   ===================================================================== */
+const RAW = [
+ {c:'身', items:[
+  {g:'身体', gp:'shēntǐ', th:'ร่างกาย', w:[
+    ['身子','shēnzi','我今天身子不太舒服。','Wǒ jīntiān shēnzi bú tài shūfu.','วันนี้ฉันรู้สึกไม่ค่อยสบายตัว'],
+    ['身上','shēnshang','我身上没带钱。','Wǒ shēnshang méi dài qián.','ฉันไม่ได้พกเงินติดตัวมา']]},
+  {g:'物体主要部分', gp:'wùtǐ zhǔyào bùfen', th:'ส่วนประกอบหลักของสิ่งของ', w:[
+    ['船身','chuánshēn','船身被刷成了白色。','Chuánshēn bèi shuā chéng le báisè.','ตัวเรือถูกทาเป็นสีขาว']]},
+  {g:'自己', gp:'zìjǐ', th:'ตัวเอง, ด้วยตนเอง', w:[
+    ['身临其境','shēnlínqíjìng','这部电影让人有身临其境的感觉。','Zhè bù diànyǐng ràng rén yǒu shēnlínqíjìng de gǎnjué.','หนังเรื่องนี้ทำให้รู้สึกเหมือนได้เข้าไปอยู่ในเหตุการณ์ด้วยตัวเอง']]},
+ ]},
+ {c:'要', items:[
+  {g:'重要的', gp:'zhòngyào de', th:'สำคัญ', w:[
+    ['要点','yàodiǎn','请把这篇文章的要点写下来。','Qǐng bǎ zhè piān wénzhāng de yàodiǎn xiě xiàlái.','กรุณาเขียนประเด็นสำคัญของบทความนี้ออกมา'],
+    ['纲要','gāngyào','老师给我们发了复习纲要。','Lǎoshī gěi wǒmen fā le fùxí gāngyào.','ครูแจกเค้าโครงสรุปเนื้อหาสำหรับทบทวนให้พวกเรา']]},
+  {g:'让别人给自己东西', gp:'ràng biérén gěi zìjǐ dōngxi', th:'ขอสิ่งของจากผู้อื่น', w:[
+    ['要钱','yào qián','孩子又向妈妈要钱买玩具。','Háizi yòu xiàng māma yào qián mǎi wánjù.','เด็กขอเงินแม่ไปซื้อของเล่นอีกแล้ว'],
+    ['要东西','yào dōngxi','他总是跟朋友要东西。','Tā zǒngshì gēn péngyou yào dōngxi.','เขาชอบขอของจากเพื่อนอยู่เรื่อย']]},
+  {g:'让别人按自己意愿做事', gp:'ràng biérén àn zìjǐ yìyuàn zuòshì', th:'ขอให้ผู้อื่นทำตามความต้องการ', w:[
+    ['要求','yāoqiú','老师要求我们按时交作业。','Lǎoshī yāoqiú wǒmen ànshí jiāo zuòyè.','ครูให้พวกเราส่งการบ้านตรงเวลา'],
+    ['要学生别迟到','yào xuésheng bié chídào','校长要学生别迟到。','Xiàozhǎng yào xuésheng bié chídào.','ผู้อำนวยการกำชับให้นักเรียนอย่ามาสาย']]},
+  {g:'表示自己想去做什么', gp:'biǎoshì zìjǐ xiǎng qù zuò shénme', th:'แสดงความต้องการของตนเอง', w:[
+    ['我要去旅行','wǒ yào qù lǚxíng','放假以后，我要去云南旅行。','Fàngjià yǐhòu, wǒ yào qù Yúnnán lǚxíng.','หลังปิดเทอม ฉันจะไปเที่ยวยูนนาน']]},
+  {g:'强力胁迫', gp:'qiánglì xiépò', th:'บังคับ, ข่มขู่', w:[
+    ['要挟','yāoxié','他用对方的秘密来要挟对方。','Tā yòng duìfāng de mìmì lái yāoxié duìfāng.','เขาใช้ความลับของอีกฝ่ายมาข่มขู่อีกฝ่าย']]},
+  {g:'将', gp:'jiāng', th:'จะ, กำลังจะ', w:[
+    ['将要','jiāngyào','火车将要进站了。','Huǒchē jiāngyào jìn zhàn le.','รถไฟกำลังจะเข้าสถานีแล้ว']]},
+  {g:'如果, 要是', gp:'rúguǒ, yàoshi', th:'ถ้าหาก', w:[
+    ['你要喜欢就买吧','nǐ yào xǐhuan jiù mǎi ba','这件衣服很适合你，你要喜欢就买吧。','Zhè jiàn yīfu hěn shìhé nǐ, nǐ yào xǐhuan jiù mǎi ba.','เสื้อตัวนี้เหมาะกับเธอมาก ถ้าชอบก็ซื้อเลย'],
+    ['你要早点来就好了','nǐ yào zǎo diǎn lái jiù hǎo le','刚才明星来过了，你要早点来就好了。','Gāngcái míngxīng lái guo le, nǐ yào zǎo diǎn lái jiù hǎo le.','เมื่อกี้ดาราเพิ่งมา ถ้าเธอมาเร็วกว่านี้ก็ดีสิ']]},
+ ]},
+ {c:'尾', items:[
+  {g:'物体的末端, 后部', gp:'wùtǐ de mòduān, hòubù', th:'ส่วนปลายหรือส่วนท้ายของสิ่งของ', w:[
+    ['船尾','chuánwěi','我们坐在船尾看风景。','Wǒmen zuò zài chuánwěi kàn fēngjǐng.','พวกเรานั่งชมวิวอยู่ที่ท้ายเรือ']]},
+  {g:'后面', gp:'hòumian', th:'ด้านหลัง, ตามหลัง', w:[
+    ['尾随','wěisuí','一只小狗一直尾随着他回家。','Yì zhī xiǎo gǒu yìzhí wěisuí zhe tā huí jiā.','ลูกหมาตัวหนึ่งเดินตามหลังเขากลับบ้านตลอดทาง']]},
+  {g:'主体以外或剩下的部分', gp:'zhǔtǐ yǐwài huò shèngxià de bùfen', th:'ส่วนที่เหลือจากส่วนหลัก หรือตอนจบ', w:[
+    ['结尾','jiéwěi','这个故事的结尾让人很感动。','Zhège gùshi de jiéwěi ràng rén hěn gǎndòng.','ตอนจบของเรื่องนี้ซึ้งมาก'],
+    ['尾声','wěishēng','比赛已经接近尾声了。','Bǐsài yǐjīng jiējìn wěishēng le.','การแข่งขันใกล้จะจบแล้ว']]},
+  {g:'鱼的量词', gp:'yú de liàngcí', th:'ลักษณนามของปลา', w:[
+    ['两尾鱼','liǎng wěi yú','他从河里钓上来两尾鱼。','Tā cóng hé lǐ diào shànglái liǎng wěi yú.','เขาตกปลาจากแม่น้ำได้สองตัว']]},
+ ]},
+ {c:'骨', items:[
+  {g:'骨头', gp:'gǔtou', th:'กระดูก', w:[
+    ['头骨','tóugǔ','考古学家发现了一块古人的头骨。','Kǎogǔxuéjiā fāxiàn le yí kuài gǔrén de tóugǔ.','นักโบราณคดีพบกะโหลกศีรษะของคนโบราณ']]},
+  {g:'像骨骼的事物', gp:'xiàng gǔgé de shìwù', th:'สิ่งที่มีลักษณะคล้ายกระดูกหรือเป็นแกนหลัก', w:[
+    ['钢骨水泥建筑','gānggǔ shuǐní jiànzhù','这座大楼是钢骨水泥建筑，非常坚固。','Zhè zuò dàlóu shì gānggǔ shuǐní jiànzhù, fēicháng jiāngù.','ตึกนี้เป็นอาคารคอนกรีตเสริมเหล็ก แข็งแรงมาก'],
+    ['骨干','gǔgàn','他是我们公司的技术骨干。','Tā shì wǒmen gōngsī de jìshù gǔgàn.','เขาเป็นกำลังหลักด้านเทคนิคของบริษัทเรา']]},
+ ]},
+ {c:'肉', items:[
+  {g:'人的肌肤', gp:'rén de jīfū', th:'กล้ามเนื้อและผิวหนังของมนุษย์', w:[
+    ['运动员肌肉发达','yùndòngyuán jīròu fādá','经过多年训练，这位运动员肌肉发达。','Jīngguò duō nián xùnliàn, zhè wèi yùndòngyuán jīròu fādá.','ผ่านการฝึกมาหลายปี นักกีฬาคนนี้มีกล้ามเนื้อแข็งแรง']]},
+  {g:'像肉的东西', gp:'xiàng ròu de dōngxi', th:'สิ่งที่มีลักษณะคล้ายเนื้อ', w:[
+    ['果肉','guǒròu','这种芒果果肉很厚，也很甜。','Zhè zhǒng mángguǒ guǒròu hěn hòu, yě hěn tián.','มะม่วงพันธุ์นี้เนื้อหนาและหวานมาก']]},
+  {g:'行动迟缓或性子慢', gp:'xíngdòng chíhuǎn huò xìngzi màn', th:'เชื่องช้า, อืดอาด', w:[
+    ['这个人太肉了','zhège rén tài ròu le','这个人太肉了，做什么都慢吞吞的。','Zhège rén tài ròu le, zuò shénme dōu màntūntūn de.','คนนี้อืดอาดมาก ทำอะไรก็ช้าไปหมด']]},
+ ]},
+ {c:'散', items:[
+  {g:'分开, 由聚集变分离', gp:'fēnkāi, yóu jùjí biàn fēnlí', th:'แยกย้าย, กระจายออก', w:[
+    ['分散','fēnsàn','学习的时候别让手机分散注意力。','Xuéxí de shíhou bié ràng shǒujī fēnsàn zhùyìlì.','ตอนเรียนอย่าให้มือถือทำให้สมาธิกระจาย']]},
+  {g:'使散开, 分发', gp:'shǐ sànkāi, fēnfā', th:'แจกจ่าย, ทำให้กระจาย', w:[
+    ['散发','sànfā','志愿者在街上散发传单。','Zhìyuànzhě zài jiē shang sànfā chuándān.','อาสาสมัครแจกใบปลิวบนถนน'],
+    ['散布','sànbù','不要随便散布谣言。','Búyào suíbiàn sànbù yáoyán.','อย่าแพร่ข่าวลือส่งเดช']]},
+  {g:'松开, 没有约束', gp:'sōngkāi, méiyǒu yuēshù', th:'หลวม, ไม่เคร่งครัด', w:[
+    ['松散','sōngsǎn','这个组织管理得很松散。','Zhège zǔzhī guǎnlǐ de hěn sōngsǎn.','องค์กรนี้บริหารแบบหละหลวมมาก'],
+    ['懒散','lǎnsǎn','他最近学习很懒散，成绩下降了。','Tā zuìjìn xuéxí hěn lǎnsǎn, chéngjì xiàjiàng le.','ช่วงนี้เขาเรียนแบบเรื่อยเปื่อย ผลการเรียนเลยตก']]},
+  {g:'零碎', gp:'língsuì', th:'กระจัดกระจาย, ยิบย่อย', w:[
+    ['零散','língsǎn','桌子上放着一些零散的硬币。','Zhuōzi shang fàng zhe yìxiē língsǎn de yìngbì.','บนโต๊ะมีเหรียญวางกระจัดกระจายอยู่']]},
+  {g:'中药药散', gp:'zhōngyào yàosǎn', th:'ยาแผนโบราณแบบผง', w:[
+    ['散剂','sǎnjì','这种中药是散剂，要用温水冲服。','Zhè zhǒng zhōngyào shì sǎnjì, yào yòng wēnshuǐ chōngfú.','ยาจีนชนิดนี้เป็นยาผง ต้องละลายน้ำอุ่นดื่ม']]},
+ ]},
+ {c:'血', items:[
+  {g:'血缘关系', gp:'xuèyuán guānxì', th:'ความสัมพันธ์ทางสายเลือด', w:[
+    ['血亲','xuèqīn','除了父母，他已经没有别的血亲了。','Chúle fùmǔ, tā yǐjīng méiyǒu biéde xuèqīn le.','นอกจากพ่อแม่ เขาก็ไม่มีญาติทางสายเลือดคนอื่นแล้ว'],
+    ['血脉相连','xuèmài xiānglián','我们虽然分隔两地，但血脉相连。','Wǒmen suīrán fēngé liǎng dì, dàn xuèmài xiānglián.','แม้จะอยู่กันคนละที่ แต่เราก็มีสายเลือดเดียวกัน']]},
+  {g:'刚烈', gp:'gāngliè', th:'กล้าหาญ, เด็ดเดี่ยว', w:[
+    ['血性','xuèxìng','他是个有血性的男子汉。','Tā shì gè yǒu xuèxìng de nánzǐhàn.','เขาเป็นลูกผู้ชายที่ใจเด็ดและกล้าหาญ'],
+    ['血气方刚','xuèqì fānggāng','年轻人血气方刚，做事容易冲动。','Niánqīngrén xuèqì fānggāng, zuòshì róngyì chōngdòng.','คนหนุ่มสาวเลือดร้อน ทำอะไรมักวู่วาม']]},
+ ]},
+ {c:'力', items:[
+  {g:'身体某一器官的效能', gp:'shēntǐ mǒu yí qìguān de xiàonéng', th:'ประสิทธิภาพหรือพลังของอวัยวะ', w:[
+    ['脑力','nǎolì','下棋是一种很费脑力的活动。','Xià qí shì yì zhǒng hěn fèi nǎolì de huódòng.','การเล่นหมากรุกเป็นกิจกรรมที่ใช้พลังสมองมาก']]},
+  {g:'事物的效能', gp:'shìwù de xiàonéng', th:'ประสิทธิภาพหรือฤทธิ์ของสิ่งต่าง ๆ', w:[
+    ['药力','yàolì','药力发作以后，他很快就睡着了。','Yàolì fāzuò yǐhòu, tā hěn kuài jiù shuìzháo le.','พอยาออกฤทธิ์ เขาก็หลับไปอย่างรวดเร็ว']]},
+ ]},
+ {c:'办', items:[
+  {g:'创设', gp:'chuàngshè', th:'จัดตั้ง, ก่อตั้ง', w:[
+    ['创办','chuàngbàn','这所学校是一百年前创办的。','Zhè suǒ xuéxiào shì yìbǎi nián qián chuàngbàn de.','โรงเรียนแห่งนี้ก่อตั้งเมื่อร้อยปีก่อน']]},
+  {g:'经营', gp:'jīngyíng', th:'ดำเนินการ, บริหารจัดการ', w:[
+    ['办工厂','bàn gōngchǎng','他回老家办了一个小工厂。','Tā huí lǎojiā bàn le yí gè xiǎo gōngchǎng.','เขากลับบ้านเกิดไปเปิดและบริหารโรงงานเล็ก ๆ']]},
+  {g:'购买', gp:'gòumǎi', th:'จัดหา, ซื้อหา', w:[
+    ['置办','zhìbàn','快过年了，家家户户都在置办年货。','Kuài guònián le, jiājiāhùhù dōu zài zhìbàn niánhuò.','ใกล้ตรุษจีนแล้ว ทุกบ้านต่างจับจ่ายซื้อของเตรียมฉลอง']]},
+  {g:'惩治', gp:'chéngzhì', th:'ลงโทษ', w:[
+    ['查办','chábàn','这个贪官已经被依法查办了。','Zhège tānguān yǐjīng bèi yīfǎ chábàn le.','ข้าราชการทุจริตคนนี้ถูกสอบสวนและลงโทษตามกฎหมายแล้ว']]},
+ ]},
+ {c:'老', items:[
+  {g:'年岁大', gp:'niánsuì dà', th:'อายุมาก', w:[
+    ['他老了','tā lǎo le','几年不见，他老了很多。','Jǐ nián bú jiàn, tā lǎo le hěn duō.','ไม่ได้เจอกันไม่กี่ปี เขาแก่ลงไปมาก']]},
+  {g:'经历时间长', gp:'jīnglì shíjiān cháng', th:'ผ่านระยะเวลายาวนาน, มีประสบการณ์', w:[
+    ['老司机','lǎo sījī','他是开了二十年车的老司机。','Tā shì kāi le èrshí nián chē de lǎo sījī.','เขาเป็นคนขับรถมือเก๋าที่ขับมายี่สิบปี']]},
+  {g:'数量程度高', gp:'shùliàng chéngdù gāo', th:'ระดับที่สูงมาก หรือสุกเกินไป', w:[
+    ['老远','lǎoyuǎn','我老远就看见你了。','Wǒ lǎoyuǎn jiù kànjiàn nǐ le.','ฉันเห็นเธอมาตั้งแต่ไกลลิบเลย'],
+    ['肉炒老了','ròu chǎo lǎo le','火太大，肉炒老了，咬不动。','Huǒ tài dà, ròu chǎo lǎo le, yǎo bú dòng.','ไฟแรงเกินไป ผัดเนื้อจนแข็ง เคี้ยวไม่ลง']]},
+ ]},
+ {c:'死', items:[
+  {g:'不活动的', gp:'bù huódòng de', th:'ไม่ขยับเขยื้อน, นิ่งสนิท', w:[
+    ['死水','sǐshuǐ','这是一潭死水，一点儿波浪都没有。','Zhè shì yì tán sǐshuǐ, yìdiǎnr bōlàng dōu méiyǒu.','นี่เป็นบ่อน้ำนิ่ง ไม่มีคลื่นเลยสักนิด']]},
+  {g:'呆板的', gp:'dāibǎn de', th:'ทื่อ, ไม่ยืดหยุ่น', w:[
+    ['死心眼儿','sǐxīnyǎnr','你别那么死心眼儿，换个方法试试。','Nǐ bié nàme sǐxīnyǎnr, huàn gè fāngfǎ shìshi.','อย่าหัวดื้อนักเลย ลองเปลี่ยนวิธีดูสิ']]},
+  {g:'断绝的', gp:'duànjué de', th:'ตัดขาด, ทางตัน', w:[
+    ['死路','sǐlù','不改革只有死路一条。','Bù gǎigé zhǐyǒu sǐlù yì tiáo.','ถ้าไม่ปฏิรูปก็มีแต่ทางตัน']]},
+  {g:'达到极点', gp:'dádào jídiǎn', th:'ถึงขีดสุด', w:[
+    ['累死了','lèi sǐ le','爬了一天山，累死了！','Pá le yì tiān shān, lèi sǐ le!','ปีนเขามาทั้งวัน เหนื่อยแทบตาย!']]},
+ ]},
+ {c:'任', items:[
+  {g:'职责, 职务', gp:'zhízé, zhíwù', th:'หน้าที่, ตำแหน่ง', w:[
+    ['重任','zhòngrèn','公司把这个重任交给了他。','Gōngsī bǎ zhège zhòngrèn jiāo gěi le tā.','บริษัทมอบหน้าที่สำคัญนี้ให้เขา']]},
+  {g:'使负担', gp:'shǐ fùdān', th:'มอบหมายให้รับภาระ', w:[
+    ['委任','wěirèn','董事会委任他为总经理。','Dǒngshìhuì wěirèn tā wéi zǒngjīnglǐ.','คณะกรรมการบริษัทแต่งตั้งเขาเป็นผู้จัดการทั่วไป'],
+    ['任命','rènmìng','他被任命为新校长。','Tā bèi rènmìng wéi xīn xiàozhǎng.','เขาได้รับแต่งตั้งเป็นผู้อำนวยการโรงเรียนคนใหม่']]},
+  {g:'听任', gp:'tīngrèn', th:'ปล่อยตามใจ, ตามแต่', w:[
+    ['任凭','rènpíng','任凭风吹雨打，他都不放弃。','Rènpíng fēng chuī yǔ dǎ, tā dōu bú fàngqì.','ไม่ว่าลมจะพัดฝนจะสาด เขาก็ไม่ยอมแพ้'],
+    ['任意','rènyì','这些书你可以任意挑选。','Zhèxiē shū nǐ kěyǐ rènyì tiāoxuǎn.','หนังสือพวกนี้เธอเลือกได้ตามใจชอบ']]},
+ ]},
+ {c:'包', items:[
+  {g:'包裹', gp:'bāoguǒ', th:'ห่อหุ้ม', w:[
+    ['包扎','bāozā','护士帮他包扎了伤口。','Hùshi bāng tā bāozā le shāngkǒu.','พยาบาลช่วยพันแผลให้เขา'],
+    ['包饺子','bāo jiǎozi','过年的时候，我们全家一起包饺子。','Guònián de shíhou, wǒmen quánjiā yìqǐ bāo jiǎozi.','ช่วงตรุษจีน ครอบครัวเราห่อเกี๊ยวด้วยกัน']]},
+  {g:'容纳', gp:'róngnà', th:'บรรจุ, ครอบคลุม', w:[
+    ['包容','bāoróng','朋友之间要互相包容。','Péngyou zhījiān yào hùxiāng bāoróng.','เพื่อนกันต้องรู้จักให้อภัยและยอมรับกัน'],
+    ['包括','bāokuò','房租包括水电费。','Fángzū bāokuò shuǐdiànfèi.','ค่าเช่ารวมค่าน้ำค่าไฟแล้ว']]},
+  {g:'担保', gp:'dānbǎo', th:'รับประกัน, รับผิดชอบ', w:[
+    ['产品实行三包','chǎnpǐn shíxíng sānbāo','这家店的产品实行三包，可以放心买。','Zhè jiā diàn de chǎnpǐn shíxíng sānbāo, kěyǐ fàngxīn mǎi.','สินค้าร้านนี้รับประกันซ่อม เปลี่ยน คืน ซื้อได้อย่างสบายใจ']]},
+  {g:'包裹好的东西', gp:'bāoguǒ hǎo de dōngxi', th:'สิ่งที่ถูกห่อไว้, พัสดุ', w:[
+    ['邮包','yóubāo','我收到了一个从北京寄来的邮包。','Wǒ shōudào le yí gè cóng Běijīng jì lái de yóubāo.','ฉันได้รับพัสดุที่ส่งมาจากปักกิ่ง']]},
+  {g:'疙瘩', gp:'gēda', th:'ตุ่ม, ก้อนที่นูนขึ้นมา', w:[
+    ['头上起了个包','tóu shang qǐ le gè bāo','他不小心撞到门，头上起了个包。','Tā bù xiǎoxīn zhuàng dào mén, tóu shang qǐ le gè bāo.','เขาเดินชนประตู หัวเลยโนเป็นตุ่ม']]},
+ ]},
+ {c:'士', items:[
+  {g:'军队的士兵', gp:'jūnduì de shìbīng', th:'ทหาร', w:[
+    ['士气','shìqì','胜利的消息大大鼓舞了士气。','Shènglì de xiāoxi dàdà gǔwǔ le shìqì.','ข่าวชัยชนะช่วยปลุกขวัญกำลังใจของทหารได้มาก']]},
+  {g:'知识分子通称', gp:'zhīshi fènzǐ tōngchēng', th:'ปัญญาชน', w:[
+    ['士农工商','shì nóng gōng shāng','古代社会把人分为士农工商四类。','Gǔdài shèhuì bǎ rén fēn wéi shì nóng gōng shāng sì lèi.','สังคมโบราณแบ่งคนเป็นสี่กลุ่ม: บัณฑิต ชาวนา ช่างฝีมือ พ่อค้า']]},
+  {g:'具有某种技术、学识或品德的人', gp:'jùyǒu mǒu zhǒng jìshù, xuéshí huò pǐndé de rén', th:'ผู้มีความรู้ ความสามารถ หรือทักษะเฉพาะ', w:[
+    ['医士','yīshì','他在乡村医院当医士。','Tā zài xiāngcūn yīyuàn dāng yīshì.','เขาทำงานเป็นผู้ช่วยแพทย์ที่โรงพยาบาลชนบท'],
+    ['博士','bóshì','她姐姐是北京大学的博士。','Tā jiějie shì Běijīng Dàxué de bóshì.','พี่สาวของเธอเป็นด็อกเตอร์จากมหาวิทยาลัยปักกิ่ง']]},
+ ]},
+ {c:'且', items:[
+  {g:'连词, 表示递进、并列', gp:'liáncí, biǎoshì dìjìn, bìngliè', th:'(คำสันธาน) เชื่อมความคล้อยตามหรือเพิ่มเติม', w:[
+    ['并且','bìngqiě','他很聪明，并且很努力。','Tā hěn cōngming, bìngqiě hěn nǔlì.','เขาฉลาด และยังขยันมากด้วย'],
+    ['且谈且走','qiě tán qiě zǒu','两个老朋友且谈且走，来到了湖边。','Liǎng gè lǎo péngyou qiě tán qiě zǒu, lái dào le hú biān.','เพื่อนเก่าสองคนเดินไปคุยไปจนถึงริมทะเลสาบ']]},
+  {g:'副词, 表示暂且、尚且', gp:'fùcí, biǎoshì zànqiě, shàngqiě', th:'(กริยาวิเศษณ์) ไปพลางก่อน หรือ ยังคง', w:[
+    ['且慢','qiěmàn','且慢！我还有话要说。','Qiěmàn! Wǒ hái yǒu huà yào shuō.','ช้าก่อน! ฉันยังมีเรื่องจะพูด'],
+    ['我们死且不怕，还怕困难吗？','wǒmen sǐ qiě bú pà, hái pà kùnnan ma?','我们死且不怕，还怕困难吗？','Wǒmen sǐ qiě bú pà, hái pà kùnnan ma?','ขนาดความตายเรายังไม่กลัว แล้วจะกลัวความลำบากหรือ']]},
+ ]},
+ {c:'歹', items:[
+  {g:'坏的, 恶的, 与“好”相对', gp:'huài de, è de, yǔ "hǎo" xiāngduì', th:'เลว, ร้าย (ตรงข้ามกับ "ดี")', w:[
+    ['不知好歹','bù zhī hǎodǎi','你真不知好歹，我是为你好。','Nǐ zhēn bù zhī hǎodǎi, wǒ shì wèi nǐ hǎo.','เธอนี่ไม่รู้ดีรู้ชั่วเลย ฉันหวังดีนะ'],
+    ['歹徒','dǎitú','警察很快就抓住了那个歹徒。','Jǐngchá hěn kuài jiù zhuāzhù le nàge dǎitú.','ตำรวจจับคนร้ายคนนั้นได้อย่างรวดเร็ว']]},
+ ]},
+ {c:'女', items:[
+  {g:'特指女儿', gp:'tè zhǐ nǚ\'ér', th:'ลูกสาว', w:[
+    ['一儿一女','yì ér yì nǚ','他们家有一儿一女，生活很幸福。','Tāmen jiā yǒu yì ér yì nǚ, shēnghuó hěn xìngfú.','บ้านเขามีลูกชายหนึ่งคนลูกสาวหนึ่งคน ชีวิตมีความสุขมาก']]},
+ ]},
+ {c:'男', items:[
+  {g:'儿子', gp:'érzi', th:'ลูกชาย', w:[
+    ['长男','zhǎngnán','他是家里的长男，从小就很懂事。','Tā shì jiā li de zhǎngnán, cóngxiǎo jiù hěn dǒngshì.','เขาเป็นลูกชายคนโตของบ้าน รู้ความมาตั้งแต่เด็ก']]},
+ ]},
+];
+
+/* ===== สร้างการ์ด: WORDS = 1 คำ/ใบ (โหมดปกติ), MEANS = 1 ความหมาย/ใบ (โหมดสลับ) ===== */
+const WORDS = [], MEANS = [];
+RAW.forEach(grp => grp.items.forEach((it, i) => {
+  const m = {
+    id:'m-' + grp.c + '-' + i, c:grp.c, g:it.g, gp:it.gp, th:it.th, n:i + 1, total:grp.items.length,
+    words: it.w.map(x => ({t:x[0], p:x[1], ex:x[2], exp:x[3], ext:x[4]})),
+    others: grp.items.filter((_, j) => j !== i).map(o => ({g:o.g, th:o.th}))
+  };
+  MEANS.push(m);
+  m.words.forEach((w, j) => WORDS.push({id:'w-' + grp.c + '-' + i + '-' + j, c:grp.c, w:w, m:m}));
+}));
+
+/* ===================== STORAGE (กันพัง) ===================== */
+const KEY = 'kuromi-flash-v2';
+const store = (() => {
+  try { localStorage.setItem('__k', '1'); localStorage.removeItem('__k'); return localStorage; }
+  catch (e) { const mem = {}; return {getItem:k => (k in mem ? mem[k] : null), setItem:(k, v) => { mem[k] = String(v); }}; }
+})();
+let marks = {};
+try { marks = JSON.parse(store.getItem(KEY) || '{}') || {}; } catch (e) { marks = {}; }
+const save = () => { try { store.setItem(KEY, JSON.stringify(marks)); } catch (e) {} };
+
+/* ===================== STATE ===================== */
+let mode = 'AB', deck = [], idx = 0, busy = false, session = {k:0, u:0}, resetArmed = false;
+const $ = id => document.getElementById(id);
+const pool = () => mode === 'AB' ? WORDS : MEANS;
+
+/* ===================== HELPERS ===================== */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+const hl = (t, c) => t.split(c).join('<span class="hl">' + c + '</span>');
+const sizeClass = t => { const n = Array.from(t).length; return n <= 2 ? 's1' : n <= 4 ? 's2' : n <= 6 ? 's3' : n <= 9 ? 's4' : 's5'; };
+const glossSize = t => { const n = Array.from(t).length; return n <= 3 ? '2.8rem' : n <= 6 ? '2rem' : n <= 9 ? '1.6rem' : '1.3rem'; };
+
+function speak(text){
+  if (!('speechSynthesis' in window)) return setMsg('เบราว์เซอร์นี้ไม่รองรับเสียง 😢');
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN'; u.rate = .8;
+  const v = speechSynthesis.getVoices().find(v => /zh[-_]CN/i.test(v.lang));
+  if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+
+const MSG = {
+  known:['เก่งมาก! คุโรมิภูมิใจ 💜','สุดยอด~ จับคู่ถูกเป๊ะ ✨','เยี่ยมเลย! ไปต่อกัน 🎀','ฮึ่ม! เก่งกว่าที่คิดนะเนี่ย 😈'],
+  unknown:['ไม่เป็นไร เดี๋ยวมาทวนใหม่ 🖤','คุโรมิจดไว้ให้แล้ว เดี๋ยวเจอกันอีก 💀','ค่อย ๆ จำนะ สู้ ๆ! 💪','ดูกล่อง "ระวังสับสน" ด้วยนะ ⚠️'],
+  flip:['ตอบในใจก่อนพลิกนะ 🤔','ทายถูกไหมเอ่ย~ 👀','ดูสูตรจำด้านล่างด้วยนะ 📖'],
+};
+const pick = a => a[Math.floor(Math.random() * a.length)];
+function setMsg(t){
+  const b = $('bubble'); b.textContent = t;
+  b.style.animation = 'none'; void b.offsetHeight; b.style.animation = '';
+}
+
+/* ===================== RENDER PARTS ===================== */
+function exBlock(w, c, title){
+  return '<div class="sec"><div class="sec-t">' + (title || '📖 ตัวอย่างประโยค') + '</div>' +
+    '<div class="ex zh">' + hl(w.ex, c) + '</div>' +
+    '<div class="exp">' + w.exp + '</div>' +
+    '<div class="ext">' + w.ext + '</div></div>';
+}
+function chip(w, c, big){
+  return '<button class="chip' + (big ? ' big' : '') + '" data-t="' + esc(w.t) + '"><b class="zh">' + hl(w.t, c) +
+    '</b><small>' + w.p + '</small></button>';
+}
+function othersBlock(m){
+  if (!m.others.length) return '';
+  return '<div class="sec warnsec"><div class="sec-t">⚠️ ความหมายอื่นของ「' + m.c + '」(ระวังสับสน)</div><div class="ol">' +
+    m.others.map(o => '<span class="zh">• ' + o.g + ' <small>(' + o.th + ')</small></span>').join('') + '</div></div>';
+}
+
+/* โหมดปกติ: หน้า = คำศัพท์ | หลัง = คำความหมายเดียวกัน */
+function frontWord(x){
+  return '<div class="tag">ตัวอักษร <b class="zh">' + x.c + '</b><span class="num">มี ' + x.m.total + ' ความหมาย</span></div>' +
+    '<div class="center">' +
+      '<div class="word zh ' + sizeClass(x.w.t) + '">' + hl(x.w.t, x.c) + '</div>' +
+      '<div class="py">' + x.w.p + '</div>' +
+      '<button class="say" data-t="' + esc(x.w.t) + '">🔊 ฟังเสียง</button>' +
+      '<div class="q">「<span class="zh hl">' + x.c + '</span>」ในคำนี้ ความหมายเหมือนคำไหน?</div>' +
+    '</div>' +
+    '<div class="hint">✨ แตะการ์ดเพื่อดูเฉลย ✨</div>';
+}
+function backWord(x){
+  const m = x.m, sib = m.words.filter(w => w !== x.w);
+  return '<div class="tag">✅ เฉลย · ความหมายที่ ' + m.n + '/' + m.total + ' ของ <b class="zh">' + x.c + '</b></div>' +
+    '<div class="ans">' +
+      '<div class="ans-l">คำที่ความหมายเหมือนกัน</div>' +
+      '<div class="gloss zh" style="font-size:' + glossSize(m.g) + '">' + m.g + '</div>' +
+      '<div class="py">' + m.gp + '</div>' +
+      '<div class="meaning">' + m.th + '</div>' +
+      '<button class="say" data-t="' + esc(m.g) + '">🔊 ฟังเสียง</button>' +
+    '</div>' +
+    '<div class="eq zh">' + hl(x.w.t, x.c) + '<span class="arrow">→</span>「' + x.c + '」= ' + m.g + '</div>' +
+    exBlock(x.w, x.c) +
+    (sib.length ? '<div class="sec"><div class="sec-t">🎀 คำอื่นที่ใช้ความหมายนี้ (แตะเพื่อฟัง)</div><div class="chips">' +
+      sib.map(w => chip(w, x.c)).join('') + '</div></div>' : '') +
+    othersBlock(m);
+}
+
+/* โหมดสลับ: หน้า = คำความหมายเดียวกัน | หลัง = คำศัพท์ทุกคำที่จับคู่ได้ */
+function frontMean(m){
+  return '<div class="tag">ตัวอักษร <b class="zh">' + m.c + '</b><span class="num">ความหมาย ' + m.n + '/' + m.total + '</span></div>' +
+    '<div class="center">' +
+      '<div class="word zh" style="font-size:' + glossSize(m.g) + '">' + m.g + '</div>' +
+      '<div class="py">' + m.gp + '</div>' +
+      '<div class="thsmall">' + m.th + '</div>' +
+      '<button class="say" data-t="' + esc(m.g) + '">🔊 ฟังเสียง</button>' +
+      '<div class="q">คำไหนที่「<span class="zh hl">' + m.c + '</span>」มีความหมายนี้?</div>' +
+    '</div>' +
+    '<div class="hint">✨ แตะการ์ดเพื่อดูเฉลย ✨</div>';
+}
+function backMean(m){
+  return '<div class="tag">✅ เฉลย · จับคู่ได้ ' + m.words.length + ' คำ</div>' +
+    '<div class="ans"><div class="ans-l zh">' + m.g + ' =</div>' +
+      '<div class="chips" style="justify-content:center">' + m.words.map(w => chip(w, m.c, true)).join('') + '</div>' +
+    '</div>' +
+    m.words.map(w => exBlock(w, m.c, '📖 ' + w.t)).join('') +
+    othersBlock(m);
+}
+
+/* ===================== RENDER ===================== */
+function resetFlip(){
+  const card = $('card');
+  card.classList.add('noanim'); card.classList.remove('flipped');
+  void card.offsetHeight; card.classList.remove('noanim');
+}
+
+function render(animate){
+  if (animate === undefined) animate = true;
+  resetFlip();
+  const w = $('wrap'); w.className = 'card-wrap';
+  const F = $('faceFront'), B = $('faceBack');
+  if (!deck.length){
+    F.innerHTML = '<div class="empty"><div style="font-size:3rem">🎉</div>ไม่มีการ์ดในหมวดนี้แล้ว!<br><small>ลองเปลี่ยนตัวกรองดูนะ</small></div>';
+    B.innerHTML = '';
+    $('counter').textContent = '0 / 0'; $('status').textContent = '';
+    updateStats(); return;
+  }
+  const c = pool()[deck[idx]];
+  if (mode === 'AB'){ F.innerHTML = frontWord(c); B.innerHTML = backWord(c); }
+  else { F.innerHTML = frontMean(c); B.innerHTML = backMean(c); }
+  F.scrollTop = 0; B.scrollTop = 0;
+  $('counter').textContent = (idx + 1) + ' / ' + deck.length;
+  const s = marks[c.id];
+  $('status').textContent = s === 'known' ? '💜 การ์ดนี้: จำได้แล้ว' : s === 'unknown' ? '💔 การ์ดนี้: ยังจำไม่ได้' : '⭐ การ์ดใหม่';
+  if (animate){ void w.offsetHeight; w.classList.add('enter'); }
+  updateStats();
+}
+
+function updateStats(){
+  const ch = $('charSel').value;
+  const scope = pool().filter(c => ch === 'all' || c.c === ch);
+  const k = scope.filter(c => marks[c.id] === 'known').length;
+  const u = scope.filter(c => marks[c.id] === 'unknown').length;
+  $('sKnown').textContent = k; $('sUnknown').textContent = u; $('sNew').textContent = scope.length - k - u;
+  $('bar').style.width = (scope.length ? k / scope.length * 100 : 0) + '%';
+}
+
+function build(shuffle){
+  const ch = $('charSel').value, f = $('filterSel').value;
+  deck = [];
+  pool().forEach((c, i) => {
+    if (ch !== 'all' && c.c !== ch) return;
+    if (f === 'unknown' && marks[c.id] !== 'unknown') return;
+    if (f === 'new' && marks[c.id]) return;
+    deck.push(i);
+  });
+  if (shuffle) for (let i = deck.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1)); const t = deck[i]; deck[i] = deck[j]; deck[j] = t;
+  }
+  idx = 0; session = {k:0, u:0};
+  render();
+}
+
+/* ===================== ACTIONS ===================== */
+function flip(){
+  if (!deck.length) return;
+  const card = $('card');
+  card.classList.toggle('flipped');
+  if (card.classList.contains('flipped')) setMsg(pick(MSG.flip));
+}
+
+function burst(emojis, n){
+  const r = $('wrap').getBoundingClientRect();
+  for (let i = 0; i < n; i++){
+    const p = document.createElement('span');
+    p.className = 'particle'; p.textContent = pick(emojis);
+    p.style.left = (r.left + r.width / 2) + 'px'; p.style.top = (r.top + r.height / 2) + 'px';
+    const a = Math.random() * Math.PI * 2, d = 120 + Math.random() * 180;
+    p.style.setProperty('--dx', Math.cos(a) * d + 'px');
+    p.style.setProperty('--dy', Math.sin(a) * d + 'px');
+    p.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1000);
+  }
+}
+
+function mark(s){
+  if (busy || !deck.length) return;
+  busy = true;
+  const c = pool()[deck[idx]];
+  marks[c.id] = s; save();
+  if (s === 'known') session.k++; else session.u++;
+  setMsg(pick(MSG[s]));
+  burst(s === 'known' ? ['💜','✨','🎀','💖','⭐'] : ['💔','💧','🖤'], s === 'known' ? 18 : 8);
+  $('wrap').className = 'card-wrap ' + (s === 'known' ? 'fly-right' : 'fly-left');
+  setTimeout(() => {
+    busy = false;
+    if (idx < deck.length - 1){ idx++; render(); }
+    else { render(false); showModal(); }
+  }, 480);
+}
+
+function go(d){
+  if (busy || !deck.length) return;
+  const n = idx + d;
+  if (n < 0 || n >= deck.length) return;
+  busy = true;
+  $('wrap').className = 'card-wrap ' + (d > 0 ? 'slide-l' : 'slide-r');
+  setTimeout(() => { busy = false; idx = n; render(); }, 280);
+}
+
+function showModal(){
+  $('mText').innerHTML = 'รอบนี้จำได้ <b>' + session.k + '</b> ใบ 💜<br>จำไม่ได้ <b>' + session.u + '</b> ใบ 💔';
+  $('modal').classList.add('show');
+  burst(['💜','🎀','✨','💀','⭐'], 30);
+}
+
+/* ===================== EVENTS ===================== */
+$('card').addEventListener('click', e => {
+  const sp = e.target.closest('[data-t]');
+  if (sp){ e.stopPropagation(); speak(sp.dataset.t); return; }
+  flip();
+});
+$('flipBtn').onclick = flip;
+$('yesBtn').onclick = () => mark('known');
+$('noBtn').onclick = () => mark('unknown');
+$('prevBtn').onclick = () => go(-1);
+$('nextBtn').onclick = () => go(1);
+$('modeBtn').onclick = () => {
+  mode = mode === 'AB' ? 'BA' : 'AB';
+  $('modeBtn').textContent = mode === 'AB' ? '🔁 คำศัพท์ → คำความหมายเดียวกัน' : '🔁 คำความหมายเดียวกัน → คำศัพท์';
+  $('modeBtn').classList.toggle('on', mode === 'BA');
+  setMsg(mode === 'AB' ? 'ดูคำศัพท์ แล้วนึกคำที่ความหมายเหมือนกัน 💜' : 'ดูความหมาย แล้วนึกคำศัพท์ที่ใช้ 😈');
+  build();
+};
+$('pyBtn').onclick = () => {
+  const off = document.body.classList.toggle('nopy');
+  $('pyBtn').textContent = off ? '🔤 พินอิน: ปิด' : '🔤 พินอิน: เปิด';
+  $('pyBtn').classList.toggle('on', off);
+  setMsg(off ? 'ซ่อนพินอินด้านหน้าแล้ว ฝึกแบบสอบจริง! 📝' : 'แสดงพินอินแล้ว 🔤');
+};
+$('shuffleBtn').onclick = () => { build(true); setMsg('สุ่มการ์ดใหม่แล้ว 🔀'); };
+$('resetBtn').onclick = () => {
+  const b = $('resetBtn');
+  if (!resetArmed){
+    resetArmed = true; b.textContent = '⚠️ กดอีกครั้งเพื่อยืนยัน'; b.classList.add('warn');
+    setTimeout(() => { resetArmed = false; b.textContent = '🗑️ ล้างผล'; b.classList.remove('warn'); }, 3000);
+    return;
+  }
+  resetArmed = false; b.textContent = '🗑️ ล้างผล'; b.classList.remove('warn');
+  marks = {}; save(); build(); setMsg('เริ่มต้นใหม่หมดแล้ว ✨');
+};
+$('charSel').onchange = () => build();
+$('filterSel').onchange = () => build();
+$('mAgain').onclick = () => { $('modal').classList.remove('show'); $('filterSel').value = 'all'; build(true); };
+$('mUnknown').onclick = () => { $('modal').classList.remove('show'); $('filterSel').value = 'unknown'; build(true); };
+$('mascot').addEventListener('click', () => setMsg(pick(MSG.known.concat(['จิ้มคุโรมิทำไมเนี่ย! 😤', 'ท่องศัพท์ต่อสิ~ 💀']))));
+
+document.addEventListener('keydown', e => {
+  if ($('modal').classList.contains('show') || e.target.tagName === 'SELECT') return;
+  if (e.code === 'Space'){ e.preventDefault(); flip(); }
+  else if (e.key === 'ArrowRight') go(1);
+  else if (e.key === 'ArrowLeft') go(-1);
+  else if (e.key === '1') mark('unknown');
+  else if (e.key === '2') mark('known');
+});
+
+let tx = 0;
+$('wrap').addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
+$('wrap').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 70) go(dx < 0 ? 1 : -1);
+});
+
+/* ===================== INIT ===================== */
+$('charSel').innerHTML = '<option value="all">🖤 ทุกตัวอักษร</option>' +
+  RAW.map(g => '<option value="' + g.c + '">' + g.c + '</option>').join('');
+
+const EM = ['💜','🖤','💀','✨','🦇','🎀','⭐','💗'];
+for (let i = 0; i < 24; i++){
+  const s = document.createElement('span');
+  s.className = 'fall'; s.textContent = pick(EM);
+  s.style.left = Math.random() * 100 + 'vw';
+  s.style.fontSize = (12 + Math.random() * 18) + 'px';
+  s.style.animationDuration = (9 + Math.random() * 12) + 's';
+  s.style.animationDelay = (-Math.random() * 20) + 's';
+  $('bg').appendChild(s);
+}
+if ('speechSynthesis' in window) speechSynthesis.getVoices();
+build();
+</script>
+</body>
+</html>
